@@ -26,7 +26,7 @@ print len(x),len(y)
 X="$ "+ str(sys.argv[-2]) + " $"
 Y="$ "+ str(sys.argv[-1]) + " $"
 
-plt.plot(x,y,".")
+plt.plot(x,y,"k.")
 plt.xlabel(X,size=20)
 plt.ylabel(Y,size=20)
 plt.show()

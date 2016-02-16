@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 void RK4(double dt,double *q1, double *q3, double *p1, double *p3,double e);
@@ -8,9 +9,9 @@ double q3prime(double dt, double q1, double q3, double p1, double p3, double e);
 double p1prime(double dt, double q1, double q3, double p1, double p3, double e);
 double p3prime(double dt, double q1, double q3, double p1, double p3, double e);
 
-int  main(void){
+int  main(int argc, char **argv){
 
-  double Tm=pow(10,2);
+  double Tm=2800;
   double dt=0.006;
   double e=0.1;
 
@@ -18,12 +19,12 @@ int  main(void){
 
   double T=0;
 
-  double q10=4.0;
+  double q10= 1/(2*pow(2,0.5));
   double q30=3.0;
   double p10=0;
   double p30=0;
 
-  double Q10=4.0;
+  double Q10= 1/(2*pow(2,0.5));
   double Q30=3.0;
   double P10=0;
   double P30=0;
@@ -33,8 +34,7 @@ int  main(void){
 
   //escribiendo primera coordenada, condicion inicial
 
-  
-  fprintf(f,"%e %e %e %e %e\n",T,q10,q30,p10,p30);
+  fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
 
   while(T<Tm){
 
@@ -46,7 +46,7 @@ int  main(void){
     fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
    
   }
-
+  fclose(f);
   return 0;
 }
 
@@ -109,27 +109,30 @@ void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, doubl
   
   /*kick*/
   p1in+=p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
-  p3in+=p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
-  
   /*drift*/
   q1in+=-1.0 * p1in * dt/24;
-  q3in+=-1.0 * p3in * dt/24;
-  
   /*kick*/
   p1in+=-2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  p3in+=-2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  
   /*drift*/  
   q1in+=3* p1in * dt/4;
-  q3in+=3* p3in * dt/4;
-  
   /*kick*/
   p1in+=2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  p3in+=2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  
   /*drift*/
   q1in+=7* p1in * dt/24;
+
+  /*kick*/
+  p3in+=p3prime(dt,q1in,q3in,p1in,p3in,e)* dt; 
+  /*drift*/
+  q3in+=-1.0 * p3in * dt/24;
+  /*kick*/
+  p3in+=-2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  /*drift*/  
+  q3in+=3* p3in * dt/4;
+  /*kick*/
+  p3in+=2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  /*drift*/
   q3in+=7* p3in * dt/24;
+
     
 
   *q1=q1in;
