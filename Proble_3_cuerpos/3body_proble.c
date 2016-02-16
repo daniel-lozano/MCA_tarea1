@@ -13,7 +13,7 @@ int  main(int argc, char **argv){
 
   double Tm=2800;
   double dt=0.006;
-  double e=0.1;
+  double e=1.0;
 
   //Condiciones iniciales
 
