@@ -2,6 +2,7 @@
 #include <math.h>
 
 void RK4(double dt,double *q1, double *q3, double *p1, double *p3,double e);
+void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, double *p3,double e);
 double q1prime(double dt, double q1, double q3, double p1, double p3, double e);
 double q3prime(double dt, double q1, double q3, double p1, double p3, double e);
 double p1prime(double dt, double q1, double q3, double p1, double p3, double e);
@@ -19,9 +20,13 @@ int  main(void){
 
   double q10=4.0;
   double q30=3.0;
-
   double p10=0;
   double p30=0;
+
+  double Q10=4.0;
+  double Q30=3.0;
+  double P10=0;
+  double P30=0;
 
   FILE *f;
   f=fopen("evolucion.dat","w");
@@ -36,8 +41,9 @@ int  main(void){
     //avanza tiempo
 
     T=T+dt;
-    RK4(dt,&p10,&p30,&q10,&q30,e);
-    fprintf(f,"%e %e %e %e %e\n",T,q10,q30,p10,p30);
+    RK4(dt,&q10,&q30,&p10,&p30,e);
+    leapfrog_step(dt,T,&Q10,&Q30,&P10,&P30,e);
+    fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
    
   }
 
@@ -89,6 +95,50 @@ void RK4(double dt,double *q1, double *q3, double *p1, double *p3,double e){
   *p3=p3in;
   
 }
+
+void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, double *p3,double e){
+  double q1in;
+  double q3in;
+  double p1in;
+  double p3in;
+    
+  q1in = *q1;
+  p1in = *p1;
+  q3in = *q3;
+  p3in = *p3;
+  
+  /*kick*/
+  p1in+=p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  p3in+=p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  
+  /*drift*/
+  q1in+=-1.0 * p1in * dt/24;
+  q3in+=-1.0 * p3in * dt/24;
+  
+  /*kick*/
+  p1in+=-2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  p3in+=-2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  
+  /*drift*/  
+  q1in+=3* p1in * dt/4;
+  q3in+=3* p3in * dt/4;
+  
+  /*kick*/
+  p1in+=2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  p3in+=2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  
+  /*drift*/
+  q1in+=7* p1in * dt/24;
+  q3in+=7* p3in * dt/24;
+    
+
+  *q1=q1in;
+  *p1=p1in;
+  *q3=q3in;
+  *p3=p3in;
+}
+
+
 
 
 double q1prime(double dt,double q1, double q3, double p1, double p3, double e){
