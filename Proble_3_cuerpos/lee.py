@@ -1,34 +1,47 @@
 import numpy as np
-#from mpl_toolkits.mplot3d import Axes3D
-#from matplotlib import cm
-#from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import matplotlib.pyplot as plt
 import sys
 
 
 lectura=str(sys.argv[1])
-coor1=int(sys.argv[2])
-coor2=int(sys.argv[3])
+c1=int(sys.argv[2])
+c2=int(sys.argv[3])
+c3=int(sys.argv[4])
+c4=int(sys.argv[5])
 archivo=open(lectura).read().split("\n")
 
-x=[]
-y=[]
+x1=[]
+y1=[]
+x2=[]
+y2=[]
 
 for i in range(len(archivo)-1):
     a= archivo[i].split()
     #print a
-    x.append(a[coor1])
-    y.append(a[coor2])
+    x1.append(a[c1])
+    y1.append(a[c2])
+    x2.append(a[c3])
+    y2.append(a[c4])
     
-
-print len(x),len(y)
 
 X="$ "+ str(sys.argv[-2]) + " $"
 Y="$ "+ str(sys.argv[-1]) + " $"
+title1="$ "+"Rungekutta" + " $"
+title2="$ "+"Simplectic" + " $"
 
-plt.plot(x,y,"k.")
+
+plt.figure(figsize=[10,5])
+plt.subplot(221)
+plt.plot(x1,y1,".")
 plt.xlabel(X,size=20)
 plt.ylabel(Y,size=20)
+plt.title(title1)
+    
+plt.subplot(222)
+plt.plot(x2,y2,".")
+plt.xlabel(X,size=20)
+plt.ylabel(Y,size=20)
+plt.title(title2)
+
 plt.show()
-plt.savefig("grafica.png")
-plt.close()
+   
