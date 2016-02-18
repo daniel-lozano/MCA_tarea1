@@ -14,20 +14,22 @@ int  main(int argc, char **argv){
   double Tm=2800;
   double dt=0.006;
   double e=1.0;
+  double condicion=atof(argv[1]);
 
   //Condiciones iniciales
 
   double T=0;
-
-  double q10= 1/(2*pow(2,0.5));
-  double q30=3.0;
+  double P=drand48();
+  double Q=drand48();
+  double q10= condicion;
+  double q30=Q;
   double p10=0;
-  double p30=0;
+  double p30=P;
 
-  double Q10= 1/(2*pow(2,0.5));
-  double Q30=3.0;
+  double Q10= condicion;
+  double Q30=Q;
   double P10=0;
-  double P30=0;
+  double P30=P;
 
   FILE *f;
   f=fopen("evolucion.dat","w");
@@ -101,6 +103,8 @@ void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, doubl
   double q3in;
   double p1in;
   double p3in;
+  double a0_2=pow(2,-1/3)/(2*(2-pow(2,1/3)));
+  double a1_2=1/(2*(2-pow(2,1/3)));
     
   q1in = *q1;
   p1in = *p1;
@@ -108,30 +112,52 @@ void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, doubl
   p3in = *p3;
   
   /*kick*/
-  p1in+=p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  p1in+=a1_2*p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
   /*drift*/
-  q1in+=-1.0 * p1in * dt/24;
+  q1in+=2*a1_2* p1in * dt;
   /*kick*/
-  p1in+=-2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  /*drift*/  
-  q1in+=3* p1in * dt/4;
-  /*kick*/
-  p1in+=2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  /*drift*/
-  q1in+=7* p1in * dt/24;
+  p1in+= a1_2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
 
   /*kick*/
-  p3in+=p3prime(dt,q1in,q3in,p1in,p3in,e)* dt; 
+  p1in+=a0_2*p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
   /*drift*/
-  q3in+=-1.0 * p3in * dt/24;
+  q1in+=2*a0_2* p1in * dt;
   /*kick*/
-  p3in+=-2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
-  /*drift*/  
-  q3in+=3* p3in * dt/4;
-  /*kick*/
-  p3in+=2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt /3;
+  p1in+= a0_2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+
+   /*kick*/
+  p1in+=a1_2*p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
   /*drift*/
-  q3in+=7* p3in * dt/24;
+  q1in+=2*a1_2* p1in * dt;
+  /*kick*/
+  p1in+= a1_2* p1prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+
+  //integra la particula pequen\~a
+
+  /*kick*/
+  p3in+=a1_2*p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  /*drift*/
+  q3in+=2*a1_2* p3in * dt;
+  /*kick*/
+  p3in+= a1_2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  
+  /*kick*/
+  p3in+=a0_2*p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  /*drift*/
+  q3in+=2*a0_2* p3in * dt;
+  /*kick*/
+  p3in+= a0_2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  
+  /*kick*/
+  p3in+=a1_2*p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  /*drift*/
+  q3in+=2*a1_2* p3in * dt;
+  /*kick*/
+  p3in+= a1_2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
+  
+
+
+ 
 
     
 

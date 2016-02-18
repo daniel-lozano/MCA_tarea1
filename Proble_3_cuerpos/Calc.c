@@ -12,15 +12,15 @@ double p3prime(double dt, double q1, double q3, double p1, double p3, double e);
 int  main(int argc, char **argv){
 
   double Tm=2800;
-  double dt=0.006;
-  double e=1.0;
+  double dt=0.06;
+  double e=0.1;
   double condicion=atof(argv[1]);
   int k;
 
   FILE *f;
   f=fopen("evolucion.dat","w");
   //Condiciones iniciales
-  for(k=0;k<100;k++){
+  for(k=0;k<83;k++){
     srand48(k);
     double Q=drand48();
     double T=0;
