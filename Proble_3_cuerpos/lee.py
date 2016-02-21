@@ -3,12 +3,22 @@ import matplotlib.pyplot as plt
 import sys
 
 
+if(len(sys.argv)!=6):
+    print("introduzca 5 parametros para correr el programa\n")
+    exit()
+
 lectura=str(sys.argv[1])
 c1=int(sys.argv[2])
 c2=int(sys.argv[3])
 c3=int(sys.argv[4])
 c4=int(sys.argv[5])
-archivo=open(lectura).read().split("\n")
+
+#existencia del archivo de entrada
+try:
+    archivo=open(lectura).read().split("\n")
+except IOError:
+   print "Error: el archivo "+lectura+ " no existe"
+   exit()
 
 x1=[]
 y1=[]

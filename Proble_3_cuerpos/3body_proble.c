@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
+
 
 void RK4(double dt,double *q1, double *q3, double *p1, double *p3,double e);
 void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, double *p3,double e);
@@ -14,6 +16,11 @@ int  main(int argc, char **argv){
   double Tm=2800;
   double dt=0.006;
   double e=1.0;
+
+  if(!argv[1]){
+    fprintf(stderr,"introduzca un parametro de entrada\n");
+    exit(1);
+  }
   double condicion=atof(argv[1]);
 
   //Condiciones iniciales
