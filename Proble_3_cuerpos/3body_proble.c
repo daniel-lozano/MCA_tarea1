@@ -13,6 +13,7 @@ double p3prime(double dt, double q1, double q3, double p1, double p3, double e);
 
 int  main(int argc, char **argv){
 
+  int i,j;
   double Tm=2800;
   double dt=0.006;
   double e=1.0;
@@ -22,38 +23,47 @@ int  main(int argc, char **argv){
     exit(1);
   }
   double condicion=atof(argv[1]);
-
-  //Condiciones iniciales
-
-  double T=0;
-  double P=drand48();
-  double Q=drand48();
-  double q10= condicion;
-  double q30=Q;
-  double p10=0;
-  double p30=P;
-
-  double Q10= condicion;
-  double Q30=Q;
-  double P10=0;
-  double P30=P;
-
   FILE *f;
   f=fopen("evolucion.dat","w");
 
   //escribiendo primera coordenada, condicion inicial
 
-  fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
 
-  while(T<Tm){
-
-    //avanza tiempo
-
-    T=T+dt;
-    RK4(dt,&q10,&q30,&p10,&p30,e);
-    leapfrog_step(dt,T,&Q10,&Q30,&P10,&P30,e);
-    fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
+  //Condiciones iniciales
+  for(i=0;i<10;i++){
+    srand(i);
+    j=0;
+    double T=0;
+    double P=(drand48()-0.5)*2;
+    double Q=(drand48()-0.5)*2;
    
+    if(i==0){
+      P=0.01;
+      Q=0.01;
+    }
+    double q10= condicion;
+    double q30=Q;
+    double p10=0;
+    double p30=P;
+    
+    double Q10= condicion;
+    double Q30=Q;
+    double P10=0;
+    double P30=P;
+    fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
+
+    while(T<Tm){
+      
+      //avanza tiempo
+      j+=1;
+      T=T+dt;
+      RK4(dt,&q10,&q30,&p10,&p30,e);
+      leapfrog_step(dt,T,&Q10,&Q30,&P10,&P30,e);
+      if(j%100==0){
+	fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
+      }
+   
+    }
   }
   fclose(f);
   return 0;
@@ -72,29 +82,32 @@ void RK4(double dt,double *q1, double *q3, double *p1, double *p3,double e){
   //paso 1
   k1=q1prime(dt,q1in,q3in,p1in,p3in,e);
   l1=p1prime(dt,q1in,q3in,p1in,p3in,e);
-  m1=q3prime(dt,q1in,q3in,p1in,p3in,e);
-  n1=p3prime(dt,q1in,q3in,p1in,p3in,e);
 
-  //paso 2
   k2=q1prime(dt,q1in+k1*dt/2,q3in+m1*dt/2,p1in+l1*dt/2 ,p3in+n1*dt/2,e);
   l2=p1prime(dt,q1in+k1*dt/2,q3in+m1*dt/2,p1in+l1*dt/2 ,p3in+n1*dt/2,e);
-  m2=q1prime(dt,q1in+k1*dt/2,q3in+m1*dt/2,p1in+l1*dt/2 ,p3in+n1*dt/2,e);
-  n2=p1prime(dt,q1in+k1*dt/2,q3in+m1*dt/2,p1in+l1*dt/2 ,p3in+n1*dt/2,e);
 
-  //paso 3
   k3=q1prime(dt,q1in+k2*dt/2,q3in+m2*dt/2,p1in+l2*dt/2 ,p3in+n2*dt/2,e);
   l3=p1prime(dt,q1in+k2*dt/2,q3in+m2*dt/2,p1in+l2*dt/2 ,p3in+n2*dt/2,e);
-  m3=q1prime(dt,q1in+k2*dt/2,q3in+m2*dt/2,p1in+l2*dt/2 ,p3in+n2*dt/2,e);
-  n3=p1prime(dt,q1in+k2*dt/2,q3in+m2*dt/2,p1in+l2*dt/2 ,p3in+n2*dt/2,e);  
 
-  //paso 4
   k4=q1prime(dt,q1in+k3*dt,q3in+m3*dt,p1in+l3*dt ,p3in+n3*dt,e);
   l4=p1prime(dt,q1in+k3*dt,q3in+m3*dt,p1in+l3*dt ,p3in+n3*dt,e);
-  m4=q1prime(dt,q1in+k3*dt,q3in+m3*dt,p1in+l3*dt ,p3in+n3*dt,e);
-  n4=p1prime(dt,q1in+k3*dt,q3in+m3*dt,p1in+l3*dt ,p3in+n3*dt,e); 
 
   q1in+=(k1+2*k2+2*k3+k4)*dt/6.0;
   p1in+=(l1+2*l2+2*l3+l4)*dt/6.0;
+
+  m1=q3prime(dt,q1in,q3in,p1in,p3in,e);
+  n1=p3prime(dt,q1in,q3in,p1in,p3in,e);
+   
+  m2=q1prime(dt,q1in+k1*dt/2,q3in+m1*dt/2,p1in+l1*dt/2 ,p3in+n1*dt/2,e);
+  n2=p1prime(dt,q1in+k1*dt/2,q3in+m1*dt/2,p1in+l1*dt/2 ,p3in+n1*dt/2,e);
+  
+  m3=q1prime(dt,q1in+k2*dt/2,q3in+m2*dt/2,p1in+l2*dt/2 ,p3in+n2*dt/2,e);
+  n3=p1prime(dt,q1in+k2*dt/2,q3in+m2*dt/2,p1in+l2*dt/2 ,p3in+n2*dt/2,e);  
+ 
+  m4=q1prime(dt,q1in+k3*dt,q3in+m3*dt,p1in+l3*dt ,p3in+n3*dt,e);
+  n4=p1prime(dt,q1in+k3*dt,q3in+m3*dt,p1in+l3*dt ,p3in+n3*dt,e); 
+
+ 
   q3in+=(m1+2*m2+2*m3+m4)*dt/6.0;
   p3in+=(n1+2*n2+2*n3+n4)*dt/6.0;
 
@@ -161,12 +174,6 @@ void leapfrog_step(double dt, double t, double *q1, double *q3,double *p1, doubl
   q3in+=2*a1_2* p3in * dt;
   /*kick*/
   p3in+= a1_2* p3prime(dt,q1in,q3in,p1in,p3in,e)* dt;
-  
-
-
- 
-
-    
 
   *q1=q1in;
   *p1=p1in;
