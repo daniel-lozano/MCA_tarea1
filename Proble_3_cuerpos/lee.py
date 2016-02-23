@@ -3,9 +3,11 @@ import matplotlib.pyplot as plt
 import sys
 
 
-if(len(sys.argv)!=6):
-    print("introduzca 5 parametros para correr el programa\n")
+if(len(sys.argv)!=8):
+    print "introduzca 6 parametros para correr el programa\n"
     exit()
+    #print "parametros dados="+ len(sys.argv)
+   
 
 lectura=str(sys.argv[1])
 c1=int(sys.argv[2])
@@ -17,6 +19,7 @@ c4=int(sys.argv[5])
 try:
     archivo=open(lectura).read().split("\n")
 except IOError:
+    
    print "Error: el archivo "+lectura+ " no existe"
    exit()
 
@@ -25,7 +28,7 @@ y1=[]
 x2=[]
 y2=[]
 
-for i in range(len(archivo)-1):
+for i in range(int(len(archivo)-1)):
     a= archivo[i].split()
     #print a
     x1.append(a[c1])
@@ -40,15 +43,21 @@ title1="$ "+"Rungekutta" + " $"
 title2="$ "+"Simplectic" + " $"
 
 
-plt.figure(figsize=[10,5])
-plt.subplot(221)
-plt.plot(x1,y1,".")
+plt.figure(figsize=[20,8])
+
+plt.subplot(121)
+plt.scatter(x1,y1,s=0.01)
+plt.xlim([-2,2])
+plt.ylim([-2,2])
 plt.xlabel(X,size=20)
 plt.ylabel(Y,size=20)
 plt.title(title1)
+
     
-plt.subplot(222)
-plt.plot(x2,y2,".")
+plt.subplot(122)
+plt.scatter(x2,y2,s=0.01)
+plt.xlim([-2,2])
+plt.ylim([-2,2])
 plt.xlabel(X,size=20)
 plt.ylabel(Y,size=20)
 plt.title(title2)
