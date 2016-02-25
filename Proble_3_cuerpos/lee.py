@@ -87,8 +87,8 @@ if(Zoom=="si"):
 if(Zoom=="no"):
     print "sin zoom\n"
 
-    X="$ "+ str(sys.argv[-2]) + " $"
-    Y="$ "+ str(sys.argv[-1]) + " $"
+    X="$ "+ str(sys.argv[-3]) + " $"
+    Y="$ "+ str(sys.argv[-2]) + " $"
     title1="$ "+"Rungekutta" + " $"
     title2="$ "+"Simplectic" + " $"
     
