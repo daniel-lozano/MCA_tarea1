@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "steps.h"
 #include "riemann.h"
+#include "steps.c"
+#include "riemann.c"
 
 /*
   C adaptation from C++ code written by Richard J. Gonsalves.
@@ -9,7 +11,7 @@
 
 typedef void (*solver)(void);
 void solve(solver stepAlgorithm, double tMax, char *filename, int plots);
-void  upwindGodunovStep();
+
 
 int main()
 {
@@ -75,16 +77,4 @@ void solve(solver stepAlgorithm, double tMax, char *filename, int plots)
     }
 }
 
-void upwindGodunovStep() {
-  // find fluxes using Riemann solver
-  for (int j = 0; j < N - 1; j++){
-    Riemann(U[j], U[j + 1], F[j]);
-  }
-  // update U
-  for (int j = 1; j < N - 1; j++){
-    for (int i = 0; i < 3; i++){
-      U[j][i] -= tau / h * (F[j][i] - F[j - 1][i]);
-    }
-  }
-}
 
