@@ -10,12 +10,9 @@
   found in Laney's textbook Computational Gasdynamics (Cambridge
   University Press.)     
  */ 
-// Translation of Laney's Riemann solver
 
-#ifndef RIEMANN_H_INCLUDED
-#define RIEMANN_H_INCLUDED
 
-inline double fg(double x) {
+ double fg(double x) { //inline double fg(double x) {
     const double gamma = 1.4;
     const double g2 = (gamma + 1) / (2 * gamma);
     return (x-1) / sqrt(g2 * (x - 1) + 1);
@@ -65,7 +62,7 @@ void Riemann(double *U1, double *U4, double *F) {
         double fz = p - pow(z, g1) / (1 + g1 * (gamma * du - a1 * fg(z)) / a4);
 
         if (abs(fz) < tol && abs(z - y) < tol) {
-            converge = true;
+            
             break;
         }
 
@@ -161,4 +158,3 @@ void Riemann(double *U1, double *U4, double *F) {
     F[2] = f3;
 }
 
-#endif /* RIEMANN_H_INCLUDED */

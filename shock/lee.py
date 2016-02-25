@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import sys
 
 
-if(len(sys.argv)!=4):
+if(len(sys.argv)!=3):
     print("introduzca 3 parametros para correr el programa\n")
     exit()
 
 lectura=str(sys.argv[1])
-c1=int(sys.argv[2])
-c2=int(sys.argv[3])
+lectura2=str(sys.argv[2])
+
 
 #existencia del archivo de entrada
 try:
@@ -18,17 +18,47 @@ except IOError:
    print "Error: el archivo "+lectura+ " no existe"
    exit()
 
-x1=[]
-y1=[]
+#existencia del archivo de entrada
+try:
+    archivo2=open(lectura2).read().split("\n")
+except IOError:
+   print "Error: el archivo "+lectura2+ " no existe"
+   exit()
 
+#abrimos el primer archivo
+x1=[]
+P1=[]
+rho1=[]
+e1=[]
+u1=[]
 
 for i in range(len(archivo)-1):
-    a= archivo[i].split()
+    a= archivo[i].split(',')
     #print a
-    x1.append(float(a[c1]))
-    y1.append(float(a[c2]))
+    x1.append(float(a[0]))
+    P1.append(float(a[1]))
+    rho1.append(float(a[2]))
+    u1.append(float(a[3]))
+    e1.append(float(a[4]))
 
-#solucionando la funcion analitica
+#abrimos elsegundo archivo
+x2=[]
+P2=[]
+rho2=[]
+e2=[]
+u2=[]
+
+for i in range(len(archivo2)-1):
+    a2= archivo2[i].split('\t')
+    #print a2
+    #print a
+    x2.append(float(a2[0]))
+    rho2.append(float(a2[1]))
+    u2.append(float(a2[2]))
+    e2.append(float(a2[3]))
+    P2.append(float(a2[4]))
+
+""" solucionando la funcion analitica
 inicio=1
 final=6
 x2=np.linspace(inicio,final,len(x1))
@@ -41,40 +71,48 @@ resta=[]
 for i in range(len(x2)):
     div.append(abs((y1[i]-y2[i])/y1[i]))
     resta.append(y1[i]-y2[i])
-
+"""
 
 X="$ x  $"
 Y="$ y $"
-title1="$ "+"Numerical\ solution" + " $"
-title2="$ "+"Analitical\ solution" + " $"
+title2="$ "+"Numerical\ solution" + " $"
+title1="$ "+"Analitical\ solution" + " $"
 title3="$ "+"Comparison" + " $"
 title4="$ "+"Percentual\ error" + " $"
 
 
-plt.figure(figsize=[10,5])
+plt.figure(figsize=[15,10])
 plt.subplot(221)
-plt.plot(x1,y1,label=title1)
+plt.ylim([-0.01,1.5]) 
+plt.plot(x1,P1,label=title1)
+plt.plot(x2,P2,label=title2)
 plt.xlabel(X,size=20)
-plt.ylabel(Y,size=20)
-plt.legend()
+plt.ylabel("$ Pressure $",size=20)
+plt.legend(loc=2)
   
 plt.subplot(222)
-plt.plot(x2,y2,label=title2)
+plt.ylim([-0.01,0.3]) 
+plt.plot(x1,u1,label=title1)
+plt.plot(x2,u2,label=title2)
 plt.xlabel(X,size=20)
-plt.ylabel(Y,size=20)
-plt.legend()
+plt.ylabel("$ U $",size=20)
+plt.legend(loc=1)
 
 plt.subplot(223)
-plt.plot(x1,resta,label=title3)
+plt.ylim([-0.01,1.1]) 
+plt.plot(x1,rho1,label=title1)
+plt.plot(x2,rho2,label=title2)
 plt.xlabel(X,size=20)
-plt.ylabel(Y,size=20)
-plt.legend()
+plt.ylabel("$\rho$",size=20)
+plt.legend(loc=3)
 
 plt.subplot(224)
-plt.plot(x1,div,label=title4)
+plt.ylim([-0.01,5]) 
+plt.plot(x1,e1,label=title1)
+plt.plot(x2,e2,label=title2)
 plt.xlabel(X,size=20)
-plt.ylabel(Y,size=20)
-plt.legend()
+plt.ylabel('$ E $',size=20)
+plt.legend(loc=2)
 
 plt.show()
    

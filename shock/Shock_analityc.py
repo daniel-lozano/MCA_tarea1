@@ -73,7 +73,7 @@ c_2 = c_l - ((gamma - 1)/2)*v_post;
 x2 = x0 + (v_post - c_2)*t;
 
 #graficamos
-n_points = 1000;    
+n_points = 5000;    
 
 x_min = -0.5;
 x_max = 0.5;
@@ -122,7 +122,7 @@ for i in range(n_points):
 f= open('datos.txt', 'w')
 
 for i in range(n_points):
-    coso = str(x[i]) +','+str(P[i])+','+str(rho[i])+','+str(u[i])+'\n'
+    coso = str(i) +','+str(P[i])+','+str(rho[i])+','+str(u[i])+','+str(e[i])+'\n'
     f.write(coso)
     
 
