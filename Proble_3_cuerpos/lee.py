@@ -45,14 +45,14 @@ for i in range(int(len(archivo1)-1)):
     t1.append(a[0])
     x1.append(a[c1])
     y1.append(a[c2])
-    E1.append(float(a[c1])**2+float(a[c2])**2)
+    E1.append(float(a[c1-1])**2+float(a[c2-1])**2)
 
 for i in range(int(len(archivo2)-1)):
     a= archivo2[i].split()
     t2.append(a[0])
     x2.append(a[c1])
     y2.append(a[c2])
-    E2.append(float(a[c1])**2+float(a[c2])**2)
+    E2.append(float(a[c1-1])**2+float(a[c2-1])**2)
       
 
  
@@ -87,20 +87,20 @@ if(Zoom=="si"):
      
     plt.subplot(223)
     plt.scatter(x1,y1,s=0.01)
-    plt.xlim([-2,0.5])
-    plt.ylim([-1,0.5])
+    plt.xlim([-2.5,-1])
+    plt.ylim([-1,1])
     plt.xlabel(X,size=20)
     plt.ylabel(Y,size=20)
-    plt.title(title1)
+   
     
     
     plt.subplot(224)
     plt.scatter(x2,y2,s=0.01)
-    plt.xlim([-2,0.5])
-    plt.ylim([-1,0.5])
+    plt.xlim([-2.5,-1])
+    plt.ylim([-1,1])
     plt.xlabel(X,size=20)
     plt.ylabel(Y,size=20)
-    plt.title(title2)
+    
     
     plt.show()
 
@@ -148,13 +148,11 @@ if(Zoom=="energia"):
     plt.subplot(211)
     plt.plot(t1,E1)
     plt.xlabel("$ time $",size=20)
-    plt.ylabel("$ Energy $",size=20)
-    plt.title(title1)
+    plt.ylabel("$ Energy\ RK\ $",size=20)
     
     plt.subplot(212)
     plt.plot(t2,E2)
     plt.xlabel("$ time $",size=20)
-    plt.ylabel("$ Energy $",size=20)
-    plt.title(title2)
+    plt.ylabel("$ Energy\ Simp\ $",size=20)
 
     plt.show()

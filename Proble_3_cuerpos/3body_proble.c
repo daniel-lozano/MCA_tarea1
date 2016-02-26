@@ -17,7 +17,7 @@ int  main(int argc, char **argv){
   int corridas=80;
   double Tm=2800;
   double dt=0.006;
-  double e=1.0;
+  double e=0.5;
   double P;
   double Q;
 
@@ -75,15 +75,23 @@ int  main(int argc, char **argv){
       leapfrog_step(dt,T,&Q10,&Q30,&P10,&P30,e);
 
       //llenando los archivos 
+      /**
+      if(pviejo*p10<=0 && Pviejo*P10<=0){
+	fprintf(f,"%e %e %e %e %e\n",T,Q10,Q30,P10,P30);
+     
+	fprintf(g,"%e %e %e %e %e\n",T,q10,q30,p10,p30);	
+      }
+      */
 
-      if(pviejo*p10<=0 && j%2==0){
+      
+      if(Pviejo*P10<=0 && j%2==0){
 	fprintf(f,"%e %e %e %e %e\n",T,Q10,Q30,P10,P30);
       }
 
       if(pviejo*p10<=0 && j%2==0){
 	fprintf(g,"%e %e %e %e %e\n",T,q10,q30,p10,p30);	
       }
-	
+      
 
       
    
