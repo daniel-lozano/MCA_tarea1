@@ -45,14 +45,14 @@ for i in range(int(len(archivo1)-1)):
     t1.append(a[0])
     x1.append(a[c1])
     y1.append(a[c2])
-    E1.append(float(a[c1-1])**2+float(a[c2-1])**2)
+    E1.append(0.5*float(a[c1-1])**2-0.5*(4*float(a[c2-1])**2+0.5**2)**(-0.5))
 
 for i in range(int(len(archivo2)-1)):
     a= archivo2[i].split()
     t2.append(a[0])
     x2.append(a[c1])
     y2.append(a[c2])
-    E2.append(float(a[c1-1])**2+float(a[c2-1])**2)
+    E2.append(0.5*float(a[c1-1])**2-0.5*(4*float(a[c2-1])**2+0.5**2)**(-0.5))
       
 
  
