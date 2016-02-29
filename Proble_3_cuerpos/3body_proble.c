@@ -14,10 +14,10 @@ double p3prime(double dt, double q1, double q3, double p1, double p3, double e);
 int  main(int argc, char **argv){
 
   int i,j;
-  int corridas=20;
+  int corridas=80;
   double Tm=2800;
   double dt=0.006;
-  double e=1.0;
+  double e=0.5;
   double P;
   double Q;
 
@@ -25,29 +25,30 @@ int  main(int argc, char **argv){
     fprintf(stderr,"introduzca un parametro de entrada\n");
     exit(1);
   }
+
   double condicion=atof(argv[1]);
   FILE *f;
-  f=fopen("evolucion.dat","w");
+  FILE *g;
+  f=fopen("simplec.dat","w");
+  g=fopen("rungek.dat","w");
 
-  //escribiendo primera coordenada, condicion inicial
-
-
-  //Condiciones iniciales
+ 
   for(i=0;i<corridas;i++){
+
     srand(i);
     j=0;
     double T=0;
-    //  double P=(drand48()-0.5)*4+0.5;
-    // double Q=(drand48()-0.5)*4+0.5;
-   
+  
+    //Condiciones iniciales
+
     if(i==0){
       P=0.01;
       Q=0.01;
     }
     
     if(i>=1){
-       P=(drand48()-0.5)*4;
-       Q=(drand48()-0.5)*4;
+       P=(drand48()-0.5)*6;
+       Q=(drand48()-0.5)*6;
     }
     double q10= condicion;
     double q30=Q;
@@ -58,18 +59,41 @@ int  main(int argc, char **argv){
     double Q30=Q;
     double P10=0;
     double P30=P;
-    fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
+    double pviejo=p10;
+    double Pviejo=P10;;
+    fprintf(f,"%e %e %e %e %e\n",T,Q10,Q30,P10,P30);
+    
+    fprintf(g,"%e %e %e %e %e \n",T,q10,q30,p10,p30);
 
     while(T<Tm){
-      
+      pviejo=p10;
+      Pviejo=P10;
       //avanza tiempo
       j+=1;
       T=T+dt;
       RK4(dt,&q10,&q30,&p10,&p30,e);
       leapfrog_step(dt,T,&Q10,&Q30,&P10,&P30,e);
-      if(j%600==0){
-	fprintf(f,"%e %e %e %e %e %e %e %e %e \n",T,q10,q30,p10,p30,Q10,Q30,P10,P30);
+
+      //llenando los archivos 
+      /**
+      if(pviejo*p10<=0 && Pviejo*P10<=0){
+	fprintf(f,"%e %e %e %e %e\n",T,Q10,Q30,P10,P30);
+     
+	fprintf(g,"%e %e %e %e %e\n",T,q10,q30,p10,p30);	
       }
+      */
+
+      
+      if(Pviejo*P10<=0 && j%2==0){
+	fprintf(f,"%e %e %e %e %e\n",T,Q10,Q30,P10,P30);
+      }
+
+      if(pviejo*p10<=0 && j%2==0){
+	fprintf(g,"%e %e %e %e %e\n",T,q10,q30,p10,p30);	
+      }
+      
+
+      
    
     }
   }
