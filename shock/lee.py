@@ -103,7 +103,7 @@ plt.ylim([-0.01,1.1])
 plt.plot(x1,rho1,label=title1)
 plt.plot(x2,rho2,label=title2)
 plt.xlabel(X,size=20)
-plt.ylabel("$\rho$",size=20)
+plt.ylabel("$rho$",size=20)
 plt.legend(loc=3)
 
 plt.subplot(224)
