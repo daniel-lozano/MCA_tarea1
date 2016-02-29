@@ -91,7 +91,7 @@ plt.ylabel("$ Pressure $",size=20)
 plt.legend(loc=2)
   
 plt.subplot(222)
-plt.ylim([-0.01,0.3]) 
+plt.ylim([-0.01,1.5]) 
 plt.plot(x1,u1,label=title1)
 plt.plot(x2,u2,label=title2)
 plt.xlabel(X,size=20)
