@@ -1,80 +1,185 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "steps.h"
-#include "riemann.h"
-#include "steps.c"
+#include <math.h>
+
+
 #include "riemann.c"
+
 
 /*
   C adaptation from C++ code written by Richard J. Gonsalves.
 */ 
 
-typedef void (*solver)(void);
-void solve(solver stepAlgorithm, double tMax, char *filename, int plots);
+
+double L = 4.0;                    // length of shock tube
+double gama = 1.4;               // ratio of specific heats
+int N = 5000;                     // number of grid points
+
+double CFL = 0.4;                // Courant-Friedrichs-Lewy number
+//double nu = 0.0;                 // artificial viscosity coefficient
+
+double **U = NULL;                      // solution with 3 components
+//double **newU = NULL;                   // new solution
+double **F = NULL;                      // flux with 3 components
+//double *vol = NULL;                     // for Roe solver
+
+double h;                        // lattice spacing
+double tau;                      // time step
+double c;
+
+int step;
+
+void allocate();
+double cMax();
+void initialize();
+void boundaryConditions(double **U);
+void upwindGodunovStep();
+void solve(double tMax);
 
 
 int main()
 {
   //solve(LaxFriedrichsStep, 1.0, "LaxFriedrichs", 5);
-   solve(upwindGodunovStep, 1.0, "UpwindGodunov", 5);
+  solve( 1.0);
+   return 0; 
+}
+
+
+void allocate() {
+  int j;
+
+  U = malloc(N * sizeof(double *));
+  // newU = malloc(N * sizeof(double *));
+  F = malloc(N * sizeof(double *));
+  // vol = malloc(N * sizeof(double *));
+  for (j = 0; j < N; j++) {
+    U[j] = malloc(3 * sizeof(double));
+    //newU[j] = malloc(3 * sizeof(double));
+    F[j] = malloc(3 * sizeof(double));
+  }
+}
+
+void initialize() {
+  int j;
+  double rho,p,u,e;
+  allocate();
+  h = 1.0 * L / (N - 1);
+
+  for (j = 0; j < N; j++) {
+    rho = 1; p = 1; u = 0;
+    if (j > N / 2){
+      rho = 0.125;
+      p = 0.1;
+    }
+    e = p / (gama - 1) + rho * u * u / 2.0;
+    U[j][0] = rho;
+    U[j][1] = rho * u;
+    U[j][2] = e;
+    //vol[j] = 1;
+
+    
+    F[j][0] = rho*u;
+    F[j][1] = rho*u*u+p;
+    F[j][2] = u*(e+p);
+  }
+  tau = CFL * h / cMax();
+  step = 0;
+}
+
+
+double cMax() {
+    double uMax = 0;
+    double rho, u, p, c;
+    int i;
+    for (i = 0; i < N; i++) {
+      if (U[i][0] == 0)
+	continue;
+
+      rho = U[i][0];
+      u = U[i][1] / rho;
+      p = (U[i][2] - rho * u * u / 2) * (gama - 1);
+      c = sqrt(gama * fabs(p) / rho);
+
+      if (uMax < (c + fabs(u)))
+	uMax = c + fabs(u);
+    }    
+    return uMax;
+}
+
+
+void boundaryConditions(double **U) {
+
+    // reflection boundary conditions at the tube ends
+  U[0][0] = U[1][0];
+  U[0][1] = -U[1][1];
+  U[0][2] = U[1][2];
+  U[N - 1][0] = U[N - 2][0];
+  U[N - 1][1] = -U[N - 2][1];
+  U[N - 1][2] = U[N - 2][2];
+}
+
+void upwindGodunovStep() {
+  int i, j;
+    // find fluxes using Riemann solver
+  for (j = 0; j < N - 1; j++){
+        Riemann(U[j], U[j + 1], F[j]);
+	//printf(" %f %f %f \n" , F[j][0] , F[j][1] , F[j][2]);
+  }
+    // update U
+  for (j = 1; j < N - 1; j++){
+    for (i = 0; i < 3; i++){
+      U[j][i] -= tau / h * (F[j][i] - F[j - 1][i]);
+    }
+  }
 }
 
 
 
 
-void solve(solver stepAlgorithm, double tMax, char *filename, int plots)
+
+void solve( double tMax)
 {
     initialize();
 
     double t = 0.0;
-    int step = 0;
-    int plot = 0;
+ 
+ 
     FILE *out;
-    char filename_tmp[1024];
+    
     int j;
-    double rho_avg = 0.0, u_avg = 0.0, e_avg = 0.0, P_avg = 0.0;
+    
     double rho, u, e, P;
 
     tau = CFL * h / cMax();
-    while(plot<=plots) {
+ 
 
-      sprintf(filename_tmp, "%s_step_%d.dat", filename, plot);
-      if(!(out = fopen(filename_tmp, "w"))){
-	fprintf(stderr, "problem opening file %s\n", filename);
-	exit(1);
-      }
-      // write solution in plot files and print       
-      double rho_avg = 0.0, u_avg = 0.0, e_avg = 0.0, P_avg = 0.0;
-      for (j = 0; j < N; j++) {
-	rho = U[j][0];
-	u = U[j][1] / U[j][0];
-	e = U[j][2];
-	P = (U[j][2] - U[j][1] * U[j][1] / U[j][0] / 2)
-	  * (gama - 1.0);
-	rho_avg += rho;
-	u_avg += u;
-	e_avg += e;
-	P_avg += P;
-	fprintf(out, "%d\t%f\t%f\t%f\t%f\n", j, rho, u, e, P);
-      }
+      
+      
 
-      fclose(out);    
-      if (rho_avg != 0.0) rho_avg /= N;
-      if (u_avg != 0.0)   u_avg /= N;
-      if (e_avg != 0.0)   e_avg /= N;
-      if (P_avg != 0.0)   P_avg /= N;
-      fprintf(stdout,"Step %d Time %f\tRho_avg %f\t u_avg %f\t e_avg %f\t P_avg %f\n", 
-	      step, t,rho_avg,u_avg,e_avg,P_avg);
-      plot++;
-
-      while (t < tMax * plot / (double)(plots)) {
+      while (t < tMax) {
 	boundaryConditions(U);
 	tau = CFL * h / cMax();
-	stepAlgorithm();
+	upwindGodunovStep();
 	t += tau;
-	step++;
+
       }
-    }
+      
+      out = fopen("UpWindGoudonovfinal.dat" , "w");
+      
+      for (j =0 ; j< N; j++) {
+
+	rho = U[j][0];
+	u = U[j][1]/rho;
+	e = U[j][2];
+	P = (gama-1.0)*(e-rho*u*u/2.0);
+	fprintf(out, "%d\t%f\t%f\t%f\t%f\n", j, rho, u, e, P);
+	
+      }
+
+    
+
+      fclose(out);   
+    
 }
 
 
