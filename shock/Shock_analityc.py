@@ -20,7 +20,7 @@ from scipy.optimize import fsolve
 #referencia: "http://www.phys.lsu.edu/~tohline/PHYS7412/sod.html"
 
 #tiempo de la solucion
-t= 0.2
+t= 1;
 
 
 #condiciones iniciales
